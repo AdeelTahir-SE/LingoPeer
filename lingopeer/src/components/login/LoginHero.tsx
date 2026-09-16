@@ -6,13 +6,13 @@ export const LoginHero: React.FC = () => {
   return (
     <View className="w-full pt-4 pb-0">
       {/* Brand Header */}
-      <View className="px-6 mb-2">
+      <View className="px-6 bomb-2">
         {/* Logo and App Title */}
-        <View className="flex-row items-center mb-2.5 -ml-2.5">
+        <View className="flex-row items-center mb-2.5 ">
           <Image
             source={require("../../../assets/logo-with-text.png")}
             style={{ width: 195, height: 52 }}
-            resizeMode="contain"
+            resizeMode="cover"
           />
         </View>
 

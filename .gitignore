@@ -5,6 +5,7 @@ node_modules/
 
 .claude
 .venv
+__pycache__
 # Expo
 .expo/
 dist/

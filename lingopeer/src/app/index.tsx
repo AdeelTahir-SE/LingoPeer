@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   TouchableOpacity,
+  StatusBar as RNStatusBar,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
@@ -53,6 +54,7 @@ export default function LoginScreen() {
       style={{ backgroundColor: "#F4F7FB" }}
       edges={["top", "bottom"]}
     >
+      <RNStatusBar barStyle="dark-content" backgroundColor="#F4F7FB" />
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -68,10 +70,10 @@ export default function LoginScreen() {
 
           {/* Main Card Container */}
           <View
-            className="flex-1 bg-white px-6 pt-6 pb-12 shadow-lg shadow-slate-200 mt-1"
+            className="flex-1 bg-white px-6 pt-6 pb-12 -mt-6"
             style={{
-              borderTopLeftRadius: 32,
-              borderTopRightRadius: 32,
+              borderTopLeftRadius: 36,
+              borderTopRightRadius: 36,
             }}
           >
             {/* Title & Subtitle */}

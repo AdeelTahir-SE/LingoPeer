@@ -19,7 +19,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={onPress}
-      className={`w-full bg-white border border-slate-200 py-3.5 px-4 rounded-2xl flex-row items-center justify-center shadow-sm ${className}`}
+      className={`w-full bg-white border border-slate-200 py-3.5 px-4 rounded-md flex-row items-center justify-center shadow-sm ${className}`}
     >
       <View className="mr-3">
         {icon === "google" ? <GoogleIcon size={20} /> : null}

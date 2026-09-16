@@ -39,7 +39,7 @@ export const Input: React.FC<InputProps> = ({
       ) : null}
 
       <View
-        className={`flex-row items-center bg-slate-50/70 border rounded-2xl px-4 py-3.5 transition-all ${
+        className={`flex-row items-center bg-slate-50/70 border rounded-md px-4 py-3.5 transition-all ${
           error
             ? "border-red-400 bg-red-50/30"
             : isFocused

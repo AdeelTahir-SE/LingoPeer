@@ -29,7 +29,7 @@ export const PrimaryButton: React.FC<PrimaryButtonProps> = ({
       activeOpacity={0.85}
       onPress={onPress}
       disabled={disabled || loading}
-      className={`w-full bg-[#5B52F9] active:bg-[#4B42E8] py-4 rounded-2xl flex-row items-center justify-center shadow-md shadow-indigo-300 ${
+      className={`w-full bg-[#5B52F9] active:bg-[#4B42E8] py-4 rounded-md flex-row items-center justify-center shadow-md shadow-indigo-300 ${
         disabled ? "opacity-60" : ""
       } ${className}`}
     >

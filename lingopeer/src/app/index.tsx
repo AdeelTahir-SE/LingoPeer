@@ -48,7 +48,11 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F4F7FB]" edges={["top"]}>
+    <SafeAreaView
+      className="flex-1 bg-[#F4F7FB]"
+      style={{ backgroundColor: "#F4F7FB" }}
+      edges={["top", "bottom"]}
+    >
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -63,7 +67,13 @@ export default function LoginScreen() {
           <LoginHero />
 
           {/* Main Card Container */}
-          <View className="flex-1 bg-white rounded-t-[32px] px-6 pt-6 pb-12 shadow-lg shadow-slate-200">
+          <View
+            className="flex-1 bg-white px-6 pt-6 pb-12 shadow-lg shadow-slate-200 mt-1"
+            style={{
+              borderTopLeftRadius: 32,
+              borderTopRightRadius: 32,
+            }}
+          >
             {/* Title & Subtitle */}
             <View className="mb-6">
               <Text className="text-[24px] font-bold text-slate-900 tracking-tight">

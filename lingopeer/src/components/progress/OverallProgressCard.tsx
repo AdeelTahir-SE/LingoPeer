@@ -35,7 +35,7 @@ export const OverallProgressCard: React.FC<OverallProgressCardProps> = ({
 
       {/* Main Card Container */}
       <View
-        className="w-full bg-[#F5F3FF] rounded-2xl p-4.5 border border-[#EDE9FE] relative overflow-hidden flex-row items-center"
+        className="w-full bg-[#F5F3FF] rounded-2xl p-4 border border-[#EDE9FE] relative overflow-hidden flex-row items-center"
         style={{
           shadowColor: "#6366F1",
           shadowOffset: { width: 0, height: 2 },
@@ -45,7 +45,7 @@ export const OverallProgressCard: React.FC<OverallProgressCardProps> = ({
         }}
       >
         {/* Left: Circular Progress Ring */}
-        <View className="relative items-center justify-center mr-4.5">
+        <View className="relative items-center justify-center mr-4">
           <Svg width={size} height={size}>
             {/* Background Track Circle */}
             <Circle

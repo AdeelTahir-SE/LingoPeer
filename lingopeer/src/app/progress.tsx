@@ -12,10 +12,7 @@ import {
   StatsCardsGrid,
   StatItem,
 } from "../components/progress/StatsCardsGrid";
-import {
-  SkillBreakdownSection,
-  SkillItem,
-} from "../components/progress/SkillBreakdownSection";
+
 import {
   BottomTabBar,
   TabKey,
@@ -25,25 +22,12 @@ export default function ProgressScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("progress");
 
-  const handleSearchPress = () => {
-    Alert.alert("Search", "Search learning stats and milestones");
-  };
 
-  const handleNotificationsPress = () => {
-    Alert.alert("Notifications", "You're on a 7-day streak! Keep up the momentum!");
-  };
 
   const handleStatPress = (stat: StatItem) => {
     Alert.alert(stat.label, `${stat.value} reached so far.`);
   };
 
-  const handleSelectSkill = (skill: SkillItem) => {
-    Alert.alert(skill.name, `Current proficiency: ${skill.percentage}%`);
-  };
-
-  const handleViewDetails = () => {
-    Alert.alert("Skill Details", "Detailed breakdown for Speaking, Listening, Reading, and Writing.");
-  };
 
   const handleTabPress = (tab: TabKey) => {
     setActiveTab(tab);
@@ -78,8 +62,7 @@ export default function ProgressScreen() {
 
       {/* Top Header with Brand & Actions */}
       <ProgressHeader
-        onSearchPress={handleSearchPress}
-        onNotificationsPress={handleNotificationsPress}
+
       />
 
       {/* Scrollable Content */}
@@ -98,11 +81,7 @@ export default function ProgressScreen() {
         {/* 2x2 Stats Grid (Streak, Time, Lessons, XP) */}
         <StatsCardsGrid onStatPress={handleStatPress} />
 
-        {/* Skill Breakdown (Speaking, Listening, Reading, Writing) */}
-        <SkillBreakdownSection
-          onViewDetails={handleViewDetails}
-          onSelectSkill={handleSelectSkill}
-        />
+    
       </ScrollView>
 
       {/* Persistent Bottom Tab Bar */}

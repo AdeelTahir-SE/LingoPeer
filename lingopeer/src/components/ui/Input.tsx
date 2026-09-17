@@ -10,6 +10,7 @@ import { Feather } from "@expo/vector-icons";
 
 export interface InputProps extends TextInputProps {
   label?: string;
+  innerLabel?: string;
   iconName?: keyof typeof Feather.glyphMap;
   isPassword?: boolean;
   error?: string;
@@ -18,6 +19,7 @@ export interface InputProps extends TextInputProps {
 
 export const Input: React.FC<InputProps> = ({
   label,
+  innerLabel,
   iconName,
   isPassword = false,
   error,
@@ -39,7 +41,7 @@ export const Input: React.FC<InputProps> = ({
       ) : null}
 
       <View
-        className={`flex-row items-center bg-slate-50/70 border rounded-md px-4 py-3.5 transition-all ${
+        className={`flex-row items-center bg-white border rounded-xl px-4 py-3 transition-all ${
           error
             ? "border-red-400 bg-red-50/30"
             : isFocused
@@ -50,24 +52,44 @@ export const Input: React.FC<InputProps> = ({
         {iconName ? (
           <Feather
             name={iconName}
-            size={19}
-            color={isFocused ? "#5B52F9" : "#94A3B8"}
+            size={20}
+            color={isFocused ? "#5B52F9" : "#64748B"}
             style={{ marginRight: 12 }}
           />
         ) : null}
 
-        <TextInput
-          className="flex-1 text-slate-900 text-[15px] p-0 font-normal"
-          placeholder={placeholder}
-          placeholderTextColor="#94A3B8"
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={isPassword && !showPassword}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          autoCapitalize={isPassword ? "none" : rest.autoCapitalize}
-          {...rest}
-        />
+        {innerLabel ? (
+          <View className="flex-1 justify-center py-0.5">
+            <Text className="text-[12px] font-semibold text-slate-800 leading-tight mb-0.5">
+              {innerLabel}
+            </Text>
+            <TextInput
+              className="text-slate-900 text-[14px] p-0 font-normal"
+              placeholder={placeholder}
+              placeholderTextColor="#94A3B8"
+              value={value}
+              onChangeText={onChangeText}
+              secureTextEntry={isPassword && !showPassword}
+              onFocus={() => setIsFocused(true)}
+              onBlur={() => setIsFocused(false)}
+              autoCapitalize={isPassword ? "none" : rest.autoCapitalize}
+              {...rest}
+            />
+          </View>
+        ) : (
+          <TextInput
+            className="flex-1 text-slate-900 text-[15px] p-0 font-normal"
+            placeholder={placeholder}
+            placeholderTextColor="#94A3B8"
+            value={value}
+            onChangeText={onChangeText}
+            secureTextEntry={isPassword && !showPassword}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            autoCapitalize={isPassword ? "none" : rest.autoCapitalize}
+            {...rest}
+          />
+        )}
 
         {isPassword ? (
           <TouchableOpacity

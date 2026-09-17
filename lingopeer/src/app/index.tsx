@@ -28,11 +28,21 @@ export default function LoginScreen() {
     setTimeout(() => {
       setLoading(false);
       console.log("Login triggered with:", { email, password });
-    }, 800);
+      try {
+        router.push("/home" as any);
+      } catch {
+        console.log("Navigate to home");
+      }
+    }, 600);
   };
 
   const handleGoogleLogin = () => {
     console.log("Google login triggered");
+    try {
+      router.push("/home" as any);
+    } catch {
+      console.log("Navigate to home");
+    }
   };
 
   const handleForgotPassword = () => {
@@ -87,7 +97,7 @@ export default function LoginScreen() {
             </View>
 
             {/* Form Fields */}
-            <View className="space-y-1 mb-2">
+            <View className="mb-2">
               <Input
                 iconName="mail"
                 placeholder="Email address"

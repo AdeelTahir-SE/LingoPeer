@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   TextInputProps,
+  Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
@@ -27,10 +28,24 @@ export const Input: React.FC<InputProps> = ({
   value,
   onChangeText,
   placeholder,
+  onFocus,
+  onBlur,
+  autoCapitalize,
   ...rest
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const getBorderColor = () => {
+    if (error) return "#F87171";
+    if (isFocused) return "#5B52F9";
+    return "#E2E8F0";
+  };
+
+  const getBackgroundColor = () => {
+    if (error) return "#FEF2F2";
+    return "#FFFFFF";
+  };
 
   return (
     <View className={`w-full mb-3.5 ${containerClassName}`}>
@@ -41,13 +56,12 @@ export const Input: React.FC<InputProps> = ({
       ) : null}
 
       <View
-        className={`flex-row items-center bg-white border rounded-xl px-4 py-3 transition-all ${
-          error
-            ? "border-red-400 bg-red-50/30"
-            : isFocused
-            ? "border-indigo-500 bg-white shadow-sm"
-            : "border-slate-200"
-        }`}
+        className="flex-row items-center rounded-md px-4 py-3"
+        style={{
+          borderWidth: 1,
+          borderColor: getBorderColor(),
+          backgroundColor: getBackgroundColor(),
+        }}
       >
         {iconName ? (
           <Feather
@@ -70,9 +84,16 @@ export const Input: React.FC<InputProps> = ({
               value={value}
               onChangeText={onChangeText}
               secureTextEntry={isPassword && !showPassword}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              autoCapitalize={isPassword ? "none" : rest.autoCapitalize}
+              onFocus={(e) => {
+                setIsFocused(true);
+                onFocus?.(e);
+              }}
+              onBlur={(e) => {
+                setIsFocused(false);
+                onBlur?.(e);
+              }}
+              autoCapitalize={isPassword ? "none" : autoCapitalize}
+              style={Platform.OS === "web" ? ({ outlineStyle: "none" } as any) : undefined}
               {...rest}
             />
           </View>
@@ -84,9 +105,16 @@ export const Input: React.FC<InputProps> = ({
             value={value}
             onChangeText={onChangeText}
             secureTextEntry={isPassword && !showPassword}
-            onFocus={() => setIsFocused(true)}
-            onBlur={() => setIsFocused(false)}
-            autoCapitalize={isPassword ? "none" : rest.autoCapitalize}
+            onFocus={(e) => {
+              setIsFocused(true);
+              onFocus?.(e);
+            }}
+            onBlur={(e) => {
+              setIsFocused(false);
+              onBlur?.(e);
+            }}
+            autoCapitalize={isPassword ? "none" : autoCapitalize}
+            style={Platform.OS === "web" ? ({ outlineStyle: "none" } as any) : undefined}
             {...rest}
           />
         )}

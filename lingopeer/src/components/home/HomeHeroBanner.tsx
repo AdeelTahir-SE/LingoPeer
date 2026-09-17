@@ -12,7 +12,7 @@ export const HomeHeroBanner: React.FC<HomeHeroBannerProps> = ({
   return (
     <View className="px-5 mb-6">
       <View
-        className="w-full bg-[#EEF2FF] rounded-3xl p-4.5 pt-5 pb-5 relative overflow-hidden border border-[#E0E7FF] flex-row items-center justify-between"
+        className="w-full bg-[#EEF2FF] rounded-md p-4.5 pt-5 pb-5 relative overflow-hidden border border-[#E0E7FF] flex-row items-center justify-between"
         style={{
           shadowColor: "#6366F1",
           shadowOffset: { width: 0, height: 4 },
@@ -42,7 +42,7 @@ export const HomeHeroBanner: React.FC<HomeHeroBannerProps> = ({
           <TouchableOpacity
             activeOpacity={0.85}
             onPress={onStartLearning}
-            className="self-start bg-[#5B52F9] active:bg-[#4B42E8] px-4 py-2 rounded-full flex-row items-center shadow-sm"
+            className="self-start bg-[#5B52F9] active:bg-[#4B42E8] px-4 py-2 rounded-md flex-row items-center shadow-sm"
           >
             <Text className="text-white text-[12.5px] font-semibold mr-1.5">
               Start Learning

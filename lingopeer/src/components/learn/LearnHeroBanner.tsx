@@ -15,7 +15,7 @@ export const LearnHeroBanner: React.FC = () => {
         }}
       >
         {/* Left Content */}
-        <View className="flex-1 pr-2 z-10 max-w-fit">
+        <View className="flex-1 pr-2 z-10 max-w-[120px] text-wrap break-words">
           <Text className="text-[19px] font-extrabold text-[#000000] leading-6 tracking-tight mb-1.5">
             Choose Your{"\n"}Language
           </Text>
@@ -25,10 +25,10 @@ export const LearnHeroBanner: React.FC = () => {
         </View>
 
         {/* Right Character Image */}
-        <View className="w-[155px] h-[165px]  items-center justify-end -mr-36 -mb-2">
+        <View className="w-[180px] h-[165px]  items-center justify-end -mr-2 -mb-2">
           <Image
             source={require("../../../assets/images/home-hero-character.png")}
-            style={{ width: 155, height: 165 }}
+            style={{ width: 180, height: 165 }}
             resizeMode="cover"
           />
         </View>

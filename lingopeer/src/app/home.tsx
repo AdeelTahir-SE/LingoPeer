@@ -33,27 +33,37 @@ export default function HomeScreen() {
   };
 
   const handleStartLearning = () => {
-    Alert.alert("Start Learning", "Starting your personalized AI lesson...");
+    try {
+      router.push("/learn" as any);
+    } catch {
+      console.log("Navigate to learn");
+    }
   };
 
   const handleSelectLanguage = (lang: UserLanguage) => {
-    Alert.alert(
-      `${lang.name} (${lang.level})`,
-      `Progress: ${lang.progress}%. Ready to continue practice?`
-    );
+    try {
+      router.push("/learn" as any);
+    } catch {
+      console.log("Navigate to learn");
+    }
   };
 
   const handlePracticePress = () => {
-    Alert.alert(
-      "Daily Conversation",
-      "Topic: Hobbies and interests\nDuration: 10 mins\nLevel: Beginner"
-    );
+    try {
+      router.push("/learn" as any);
+    } catch {
+      console.log("Navigate to learn");
+    }
   };
 
   const handleTabPress = (tab: TabKey) => {
     setActiveTab(tab);
-    if (tab !== "home") {
-      console.log(`Navigated to tab: ${tab}`);
+    if (tab === "learn") {
+      try {
+        router.push("/learn" as any);
+      } catch {
+        console.log("Navigate to learn");
+      }
     }
   };
 
@@ -66,11 +76,7 @@ export default function HomeScreen() {
       <RNStatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
 
       {/* Top App Header */}
-      <HomeHeader
-        hasNotifications={true}
-        onNotificationsPress={handleNotificationsPress}
-        onProfilePress={handleProfilePress}
-      />
+      <HomeHeader />
 
       {/* Main Scrollable Content */}
       <ScrollView

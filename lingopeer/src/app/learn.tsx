@@ -80,6 +80,18 @@ export default function LearnScreen() {
       } catch {
         console.log("Navigate to home");
       }
+    } else if (tab === "progress") {
+      try {
+        router.push("/progress" as any);
+      } catch {
+        console.log("Navigate to progress");
+      }
+    } else if (tab === "profile") {
+      try {
+        router.push("/profile" as any);
+      } catch {
+        console.log("Navigate to profile");
+      }
     }
   };
 

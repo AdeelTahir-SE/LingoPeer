@@ -28,8 +28,11 @@ export default function HomeScreen() {
   };
 
   const handleProfilePress = () => {
-    setActiveTab("profile");
-    Alert.alert("Profile", "Alex Carter (Level 2)");
+    try {
+      router.push("/profile" as any);
+    } catch {
+      console.log("Navigate to profile");
+    }
   };
 
   const handleStartLearning = () => {
@@ -63,6 +66,18 @@ export default function HomeScreen() {
         router.push("/learn" as any);
       } catch {
         console.log("Navigate to learn");
+      }
+    } else if (tab === "progress") {
+      try {
+        router.push("/progress" as any);
+      } catch {
+        console.log("Navigate to progress");
+      }
+    } else if (tab === "profile") {
+      try {
+        router.push("/profile" as any);
+      } catch {
+        console.log("Navigate to profile");
       }
     }
   };

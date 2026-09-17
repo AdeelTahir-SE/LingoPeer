@@ -12,7 +12,7 @@ export const HomeHeroBanner: React.FC<HomeHeroBannerProps> = ({
   return (
     <View className="px-5 mb-6">
       <View
-        className="w-full bg-[#EEF2FF] rounded-md p-4.5 pt-5 pb-5 relative overflow-hidden border border-[#E0E7FF] flex-row items-center justify-between"
+        className="w-full  bg-[#EEF2FF] rounded-md  relative overflow-hidden border p-4.5 pt-5  border-[#f5f1f1] flex-row items-center justify-between"
         style={{
           shadowColor: "#6366F1",
           shadowOffset: { width: 0, height: 4 },
@@ -22,7 +22,7 @@ export const HomeHeroBanner: React.FC<HomeHeroBannerProps> = ({
         }}
       >
         {/* Left Content */}
-        <View className="flex-1 pr-1 z-10">
+        <View className="flex-1 p-4 z-10 ">
           {/* Subtitle / Category */}
           <Text className="text-[11px] font-semibold text-[#6366F1] uppercase tracking-wider mb-1">
             Your Personal AI Language Tutor
@@ -52,11 +52,11 @@ export const HomeHeroBanner: React.FC<HomeHeroBannerProps> = ({
         </View>
 
         {/* Right Character Image */}
-        <View className="w-[125px] h-[135px] items-center justify-end -mr-1 -mb-2">
+        <View className=" w-[125px] h-fit items-center justify-end pr-16 ">
           <Image
             source={require("../../../assets/images/home-hero-character.png")}
-            style={{ width: 125, height: 135 }}
-            resizeMode="contain"
+            style={{ width: 185, height: 175 }}
+            resizeMode="cover"
           />
         </View>
       </View>

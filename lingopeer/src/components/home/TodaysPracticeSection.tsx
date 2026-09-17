@@ -22,7 +22,7 @@ export const TodaysPracticeSection: React.FC<TodaysPracticeSectionProps> = ({
       <TouchableOpacity
         activeOpacity={0.85}
         onPress={onPracticePress}
-        className="w-full bg-white rounded-2xl p-4 border border-slate-100 flex-row items-center justify-between shadow-sm"
+        className="w-full bg-white rounded-md p-4 border border-slate-100 flex-row items-center justify-between shadow-sm"
         style={{
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 2 },
@@ -32,7 +32,7 @@ export const TodaysPracticeSection: React.FC<TodaysPracticeSectionProps> = ({
         }}
       >
         {/* Left Icon Container */}
-        <View className="w-12 h-12 rounded-2xl bg-[#5B52F9] items-center justify-center mr-3.5 shadow-sm">
+        <View className="w-12 h-12 rounded-md bg-[#5B52F9] items-center justify-center mr-3.5 shadow-sm">
           <Ionicons name="chatbubble-ellipses" size={24} color="#FFFFFF" />
         </View>
 

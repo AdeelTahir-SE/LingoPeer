@@ -9,12 +9,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { HomeHeader } from "../components/home/HomeHeader";
 import { HomeHeroBanner } from "../components/home/HomeHeroBanner";
+import { TodaysPracticeSection } from "../components/home/TodaysPracticeSection";
 import {
   MyLanguagesSection,
   UserLanguage,
 } from "../components/home/MyLanguagesSection";
-import { TodaysPracticeSection } from "../components/home/TodaysPracticeSection";
-import { QuickActionsSection } from "../components/home/QuickActionsSection";
 import {
   BottomTabBar,
   TabKey,
@@ -37,13 +36,6 @@ export default function HomeScreen() {
     Alert.alert("Start Learning", "Starting your personalized AI lesson...");
   };
 
-  const handleViewAllLanguages = () => {
-    Alert.alert(
-      "All Languages",
-      "Explore 50+ languages available on LingoPeer."
-    );
-  };
-
   const handleSelectLanguage = (lang: UserLanguage) => {
     Alert.alert(
       `${lang.name} (${lang.level})`,
@@ -56,34 +48,6 @@ export default function HomeScreen() {
       "Daily Conversation",
       "Topic: Hobbies and interests\nDuration: 10 mins\nLevel: Beginner"
     );
-  };
-
-  const handleQuickAction = (actionId: string) => {
-    switch (actionId) {
-      case "speaking":
-        Alert.alert("Speaking Practice", "Opening Voice & Pronunciation Studio...");
-        break;
-      case "vocabulary":
-        Alert.alert(
-          "Vocabulary Builder",
-          "Reviewing your daily flashcards and vocabulary sets."
-        );
-        break;
-      case "grammar":
-        Alert.alert(
-          "Grammar Helper",
-          "Get instant explanations and practice exercises."
-        );
-        break;
-      case "ai-tutor":
-        Alert.alert(
-          "AI Tutor",
-          "Connecting with your AI language companion..."
-        );
-        break;
-      default:
-        break;
-    }
   };
 
   const handleTabPress = (tab: TabKey) => {
@@ -117,17 +81,13 @@ export default function HomeScreen() {
         {/* Hero Banner with Character */}
         <HomeHeroBanner onStartLearning={handleStartLearning} />
 
-        {/* My Languages Section */}
-        <MyLanguagesSection
-          onViewAll={handleViewAllLanguages}
-          onSelectLanguage={handleSelectLanguage}
-        />
-
-        {/* Today's Practice Section */}
+        {/* Today's Practice Section (Moved above My Languages) */}
         <TodaysPracticeSection onPracticePress={handlePracticePress} />
 
-        {/* Quick Actions Section */}
-        <QuickActionsSection onActionPress={handleQuickAction} />
+        {/* My Languages Section (Column Layout) */}
+        <MyLanguagesSection
+          onSelectLanguage={handleSelectLanguage}
+        />
       </ScrollView>
 
       {/* Persistent Bottom Tab Bar */}

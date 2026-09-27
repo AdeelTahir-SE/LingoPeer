@@ -16,6 +16,9 @@ import { Input } from "../components/ui/Input";
 import { PrimaryButton } from "../components/ui/PrimaryButton";
 import { SocialButton } from "../components/ui/SocialButton";
 import { DecorativeBlobs } from "../components/ui/DecorativeBlobs";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { api } from "../services/api";
 
 export default function SignupScreen() {
   const router = useRouter();
@@ -61,43 +64,61 @@ export default function SignupScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!validate()) return;
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      console.log("Account created successfully:", {
-        fullName,
-        email,
-        selectedLanguages,
+    try {
+      setLoading(true);
+      const res = await api.register({
+        email: email.trim(),
+        password,
+        full_name: fullName.trim(),
+        metadata: {
+          target_languages: selectedLanguages,
+        },
       });
-      Alert.alert(
-        "Account Created! 🎉",
-        `Welcome to LingoPeer, ${fullName}! Your account has been created.`,
-        [
-          {
-            text: "Get Started",
-            onPress: () => {
-              // Navigate to home / next onboarding step
-              try {
-                router.replace("/" as any);
-              } catch {
-                console.log("Navigate to home");
-              }
+
+      if (res.access_token) {
+        Alert.alert(
+          "Account Created! 🎉",
+          `Welcome to LingoPeer, ${fullName}! Your account is ready.`,
+          [
+            {
+              text: "Get Started",
+              onPress: () => router.replace("/home" as any),
             },
-          },
-        ]
-      );
-    }, 1000);
+          ]
+        );
+      } else {
+        Alert.alert(
+          "Check Your Email ✉️",
+          res.message || "Please check your email to verify your account.",
+          [
+            {
+              text: "Go to Login",
+              onPress: () => router.replace("/" as any),
+            },
+          ]
+        );
+      }
+    } catch (err: any) {
+      Alert.alert("Registration Failed", err.message || "Failed to create account.");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleGoogleSignup = () => {
-    console.log("Google signup triggered with languages:", selectedLanguages);
-    Alert.alert(
-      "Google Sign-Up",
-      "Connecting with Google to create your account..."
-    );
+  const handleGoogleSignup = async () => {
+    try {
+      const redirectUri = Linking.createURL("auth/callback");
+      const { url } = await api.getGoogleAuthUrl(redirectUri);
+      const result = await WebBrowser.openAuthSessionAsync(url, redirectUri);
+      if (result.type === "success") {
+        router.replace("/home" as any);
+      }
+    } catch (err: any) {
+      Alert.alert("Google Sign-Up", err.message || "Failed to start Google sign-up.");
+    }
   };
 
   const handleNavigateToLogin = () => {

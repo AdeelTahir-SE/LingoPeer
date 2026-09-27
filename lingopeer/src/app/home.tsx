@@ -53,9 +53,17 @@ export default function HomeScreen() {
 
   const handlePracticePress = () => {
     try {
-      router.push("/learn" as any);
+      router.push({
+        pathname: "/chat" as any,
+        params: {
+          agentId: "sofia",
+          agentName: "Sofia",
+          language: "Spanish",
+          flag: "🇪🇸",
+        },
+      });
     } catch {
-      console.log("Navigate to learn");
+      router.push("/learn" as any);
     }
   };
 

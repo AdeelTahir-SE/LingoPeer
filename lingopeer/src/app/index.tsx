@@ -15,6 +15,10 @@ import { Input } from "../components/ui/Input";
 import { PrimaryButton } from "../components/ui/PrimaryButton";
 import { SocialButton } from "../components/ui/SocialButton";
 import { DecorativeBlobs } from "../components/ui/DecorativeBlobs";
+import { Alert } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+import { api } from "../services/api";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -22,40 +26,45 @@ export default function LoginScreen() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // UI state handler - ready for your backend integration
-    setLoading(true);
-    setTimeout(() => {
+  const handleLogin = async () => {
+    if (!email.trim() || !password) {
+      Alert.alert("Missing Fields", "Please enter both your email and password.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await api.login({ email: email.trim(), password });
+      router.replace("/home" as any);
+    } catch (err: any) {
+      Alert.alert("Login Failed", err.message || "Could not log in with provided credentials.");
+    } finally {
       setLoading(false);
-      console.log("Login triggered with:", { email, password });
-      try {
-        router.push("/home" as any);
-      } catch {
-        console.log("Navigate to home");
-      }
-    }, 600);
+    }
   };
 
-  const handleGoogleLogin = () => {
-    console.log("Google login triggered");
+  const handleGoogleLogin = async () => {
     try {
-      router.push("/home" as any);
-    } catch {
-      console.log("Navigate to home");
+      const redirectUri = Linking.createURL("auth/callback");
+      const { url } = await api.getGoogleAuthUrl(redirectUri);
+      const result = await WebBrowser.openAuthSessionAsync(url, redirectUri);
+      if (result.type === "success") {
+        router.replace("/home" as any);
+      }
+    } catch (err: any) {
+      Alert.alert("Google Sign-In", err.message || "Failed to start Google sign-in.");
     }
   };
 
   const handleForgotPassword = () => {
-    console.log("Forgot password pressed");
+    Alert.alert(
+      "Forgot Password",
+      "Please contact support or check your email to reset your password."
+    );
   };
 
   const handleNavigateToSignup = () => {
-    // If signup route exists, route to it
-    try {
-      router.push("/signup" as any);
-    } catch {
-      console.log("Navigate to signup");
-    }
+    router.push("/signup" as any);
   };
 
   return (

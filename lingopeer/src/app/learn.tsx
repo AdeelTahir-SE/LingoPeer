@@ -54,22 +54,15 @@ export default function LearnScreen() {
   };
 
   const handleContinueWithAgent = (agent: AIAgent) => {
-    Alert.alert(
-      "Tutor Selected! 🚀",
-      `You're all set to practice ${selectedLanguage?.name} with ${agent.name} (${agent.style}).`,
-      [
-        {
-          text: "Start Conversation",
-          onPress: () => {
-            try {
-              router.push("/home" as any);
-            } catch {
-              console.log("Navigate back");
-            }
-          },
-        },
-      ]
-    );
+    router.push({
+      pathname: "/chat" as any,
+      params: {
+        agentId: agent.id,
+        agentName: agent.name,
+        language: selectedLanguage?.name || "Spanish",
+        flag: selectedLanguage?.flag || "🇪🇸",
+      },
+    });
   };
 
   const handleTabPress = (tab: TabKey) => {

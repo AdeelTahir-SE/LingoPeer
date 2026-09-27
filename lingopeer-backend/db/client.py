@@ -11,13 +11,8 @@ if env_path.exists():
 else:
     load_dotenv()
 
-supabase_url = os.environ.get("SUPABASE_URL")
-supabase_key = os.environ.get("SUPABASE_KEY")
-
-if not supabase_url or not supabase_key:
-    raise RuntimeError(
-        "Supabase credentials missing! Please ensure SUPABASE_URL and SUPABASE_KEY are set in .env."
-    )
+supabase_url = os.environ.get("SUPABASE_URL") or "https://uulxfxtcjeroxneamqkn.supabase.co"
+supabase_key = os.environ.get("SUPABASE_KEY") or "sb_publishable_1-xb5l14CFMbPqKLwRk7WA_vyxYqFi4"
 
 client: Client = create_client(supabase_url, supabase_key)
 

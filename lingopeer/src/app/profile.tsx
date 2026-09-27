@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ScrollView,
   StatusBar as RNStatusBar,
   Alert,
+  View,
+  Text,
+  TouchableOpacity,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
+import { Feather } from "@expo/vector-icons";
 import { ProfileHeader } from "../components/profile/ProfileHeader";
 import { UserProfileCard } from "../components/profile/UserProfileCard";
 import { ProfileGoalCard } from "../components/profile/ProfileGoalCard";
@@ -21,10 +25,25 @@ import {
   BottomTabBar,
   TabKey,
 } from "../components/navigation/BottomTabBar";
+import { api, UserProfile } from "../services/api";
 
 export default function ProfileScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabKey>("profile");
+  const [user, setUser] = useState<UserProfile | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    api
+      .getMe()
+      .then((data) => {
+        if (isMounted) setUser(data);
+      })
+      .catch(() => {});
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleSettingsPress = () => {
     Alert.alert("Settings", "Account and application preferences");
@@ -36,6 +55,20 @@ export default function ProfileScreen() {
 
   const handleGoalPress = () => {
     Alert.alert("Your Goal", "Current Goal: Become fluent in 3 languages. Target completion: 6 months.");
+  };
+
+  const handleLogout = async () => {
+    Alert.alert("Sign Out", "Are you sure you want to sign out?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Sign Out",
+        style: "destructive",
+        onPress: async () => {
+          await api.logout();
+          router.replace("/" as any);
+        },
+      },
+    ]);
   };
 
   const handleViewAllLanguages = () => {
@@ -100,8 +133,8 @@ export default function ProfileScreen() {
       >
         {/* User Profile Card (Avatar, Name, Email, Level, Edit) */}
         <UserProfileCard
-          name="Alex Carter"
-          email="alex.carter@example.com"
+          name={user?.user_metadata?.full_name || "Language Learner"}
+          email={user?.email || "learner@lingopeer.com"}
           level="Level 2"
           onEditPress={handleEditPress}
         />
@@ -120,6 +153,20 @@ export default function ProfileScreen() {
 
         {/* Profile Menu Items (Plan, Achievements, Saved, Settings) */}
         <ProfileMenuItems onItemPress={handleMenuItemPress} />
+
+        {/* Sign Out Button */}
+        <View className="px-5 mt-1 mb-6">
+          <TouchableOpacity
+            onPress={handleLogout}
+            activeOpacity={0.8}
+            className="w-full bg-rose-50 border border-rose-200/70 rounded-2xl py-3.5 flex-row items-center justify-center gap-2"
+          >
+            <Feather name="log-out" size={17} color="#E11D48" />
+            <Text className="text-rose-600 font-bold text-[14px]">
+              Sign Out
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Persistent Bottom Tab Bar */}

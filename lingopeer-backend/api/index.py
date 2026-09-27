@@ -1,10 +1,14 @@
 import sys
 from pathlib import Path
 
-# Ensure lingopeer-backend root is in sys.path
+# Ensure lingopeer-backend root and api dir are in sys.path
 root_dir = Path(__file__).resolve().parent.parent
 if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
+
+current_dir = Path(__file__).resolve().parent
+if str(current_dir) not in sys.path:
+    sys.path.insert(0, str(current_dir))
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware

@@ -23,12 +23,20 @@ const request = async <T>(
   options: RequestInit = {}
 ): Promise<T> => {
   const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
+  const normalizedPath = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${baseUrl}${normalizedPath}`;
+
+  const [pathOnly, queryOnly] = normalizedPath.split("?");
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
+    "x-invoke-path": pathOnly,
     ...(options.headers as Record<string, string>),
   };
+
+  if (queryOnly) {
+    headers["x-invoke-query"] = queryOnly;
+  }
 
   if (authToken) {
     headers["Authorization"] = `Bearer ${authToken}`;
@@ -43,12 +51,17 @@ const request = async <T>(
     let errorDetail = `Request failed with status ${response.status}`;
     try {
       const errorJson = await response.json();
-      errorDetail = errorJson.detail || errorDetail;
+      errorDetail = errorJson.detail || errorJson.message || errorDetail;
     } catch {}
     throw new Error(errorDetail);
   }
 
-  return response.json();
+  const data = await response.json();
+  if (data && typeof data === "object" && (data as any).message === "FastAPI route not found") {
+    throw new Error(`API route not found: ${(data as any).requested_path || endpoint}`);
+  }
+
+  return data;
 };
 
 // ---------------------------------------------------------------------------
@@ -175,6 +188,40 @@ export const api = {
   getGoogleAuthUrl: (redirectTo?: string) => {
     const query = redirectTo ? `?redirect_to=${encodeURIComponent(redirectTo)}` : "";
     return request<OAuthUrlResponse>(`/api/auth/google/url${query}`);
+  },
+
+  exchangeOAuthCode: async (code: string, redirectTo?: string) => {
+    const query = redirectTo
+      ? `?code=${encodeURIComponent(code)}&redirect_to=${encodeURIComponent(redirectTo)}`
+      : `?code=${encodeURIComponent(code)}`;
+    const res = await request<AuthResponse>(`/api/auth/callback${query}`);
+    if (res.access_token) {
+      setAuthToken(res.access_token);
+    }
+    return res;
+  },
+
+  handleOAuthCallbackUrl: async (callbackUrl: string, redirectTo?: string) => {
+    try {
+      const hashIndex = callbackUrl.indexOf("#");
+      const queryIndex = callbackUrl.indexOf("?");
+      const hashParams = hashIndex !== -1 ? new URLSearchParams(callbackUrl.substring(hashIndex + 1)) : null;
+      const queryParams = queryIndex !== -1 ? new URLSearchParams(callbackUrl.substring(queryIndex + 1).split("#")[0]) : null;
+
+      const accessToken = hashParams?.get("access_token") || queryParams?.get("access_token");
+      if (accessToken) {
+        setAuthToken(accessToken);
+        return { access_token: accessToken };
+      }
+
+      const code = queryParams?.get("code") || hashParams?.get("code");
+      if (code) {
+        return await api.exchangeOAuthCode(code, redirectTo);
+      }
+    } catch (e) {
+      console.warn("Error parsing OAuth callback url:", e);
+    }
+    return null;
   },
 
   loginWithGoogleIdToken: async (idToken: string) => {

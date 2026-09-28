@@ -11,6 +11,7 @@ if str(current_dir) not in sys.path:
     sys.path.insert(0, str(current_dir))
 
 from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.auth.router import auth_router
 from api.chat.router import chat_router
@@ -28,19 +29,23 @@ class VercelPathMiddleware:
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
             headers = dict(scope.get("headers", []))
-            matched_path = (
-                headers.get(b"x-invoke-path")
-                or headers.get(b"x-matched-path")
-                or headers.get(b"x-forwarded-uri")
-                or headers.get(b"x-real-path")
-            )
-            if matched_path:
-                path_str = matched_path.decode("utf-8").split("?")[0]
+            candidate_paths = [
+                headers.get(b"x-invoke-path"),
+                headers.get(b"x-forwarded-uri"),
+                headers.get(b"x-original-url"),
+                headers.get(b"x-real-path"),
+                headers.get(b"x-matched-path"),
+            ]
+            for candidate in candidate_paths:
+                if not candidate:
+                    continue
+                path_str = candidate.decode("utf-8").split("?")[0]
                 if path_str and not path_str.endswith(".py"):
                     if not path_str.startswith("/"):
                         path_str = "/" + path_str
                     scope["path"] = path_str
                     scope["raw_path"] = path_str.encode("utf-8")
+                    break
 
             invoke_query = headers.get(b"x-invoke-query")
             if invoke_query and not scope.get("query_string"):
@@ -98,8 +103,11 @@ def read_item(item_id: int, q: str | None = None):
 
 @app.api_route("/{path_name:path}", methods=["GET", "POST", "PUT", "DELETE"])
 async def catch_all(request: Request, path_name: str):
-    return {
-        "message": "FastAPI route not found",
-        "requested_path": request.url.path,
-        "path_param": path_name,
-    }
+    return JSONResponse(
+        status_code=404,
+        content={
+            "message": "FastAPI route not found",
+            "requested_path": request.url.path,
+            "path_param": path_name,
+        },
+    )

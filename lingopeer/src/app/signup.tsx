@@ -111,9 +111,15 @@ export default function SignupScreen() {
   const handleGoogleSignup = async () => {
     try {
       const redirectUri = Linking.createURL("auth/callback");
-      const { url } = await api.getGoogleAuthUrl(redirectUri);
-      const result = await WebBrowser.openAuthSessionAsync(url, redirectUri);
+      const res = await api.getGoogleAuthUrl(redirectUri);
+      if (!res?.url) {
+        throw new Error("Did not receive a valid authorization URL from the server.");
+      }
+      const result = await WebBrowser.openAuthSessionAsync(res.url, redirectUri);
       if (result.type === "success") {
+        if (result.url) {
+          await api.handleOAuthCallbackUrl(result.url, redirectUri);
+        }
         router.replace("/home" as any);
       }
     } catch (err: any) {

@@ -234,6 +234,47 @@ class TestAuthEndpoints(unittest.TestCase):
         self.assertTrue(data["success"])
         self.assertIn("logged out", data["message"].lower())
 
+    def test_vercel_rewrite_path_recovery(self):
+        response = client.get("/api/index.py?__path__=/")
+        self.assertEqual(response.status_code, 200)
+
+        response2 = client.get("/api/index.py?__path__=/api/auth/google/url")
+        self.assertEqual(response2.status_code, 200)
+        data = response2.json()
+        self.assertIn("url", data)
+
+    def test_browser_html_callback_fallback(self):
+        response = client.get("/auth/callback")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("text/html", response.headers["content-type"])
+        self.assertIn("lingopeer://auth/callback", response.text)
+
+    @patch("api.auth.router.exchange_code_for_session")
+    def test_oauth_callback_deep_link_redirect(self, mock_exchange):
+        mock_user = MagicMock()
+        mock_user.id = "oauth-user-uuid"
+        mock_user.email = "oauth@gmail.com"
+        mock_user.user_metadata = {}
+        mock_user.created_at = "2026-09-27T00:00:00Z"
+
+        mock_session = MagicMock()
+        mock_session.access_token = "oauth-access-token"
+        mock_session.refresh_token = "oauth-refresh-token"
+        mock_session.token_type = "bearer"
+        mock_session.expires_in = 3600
+
+        mock_auth_res = MagicMock()
+        mock_auth_res.user = mock_user
+        mock_auth_res.session = mock_session
+        mock_exchange.return_value = mock_auth_res
+
+        response = client.get(
+            "/auth/callback?code=mock_code&redirect_to=lingopeer://auth/callback",
+            follow_redirects=False,
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("lingopeer://auth/callback#access_token=oauth-access-token", response.headers["location"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,5 +1,6 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import HTMLResponse, RedirectResponse
 from supabase_auth.errors import AuthApiError, AuthError
 
 from api.auth.deps import get_current_user
@@ -127,19 +128,66 @@ async def get_google_auth_url(redirect_to: Optional[str] = Query(None, descripti
         _handle_supabase_error(e)
 
 
-@auth_router.get("/callback", response_model=AuthResponse)
+@auth_router.get("/callback")
 async def auth_callback(
-    code: str = Query(..., description="Authorization code from OAuth provider"),
+    code: Optional[str] = Query(None, description="Authorization code from OAuth provider"),
     redirect_to: Optional[str] = Query(None, description="Original redirect URI"),
+    error: Optional[str] = Query(None, description="OAuth error code"),
+    error_description: Optional[str] = Query(None, description="OAuth error description"),
 ):
     """
-    OAuth callback endpoint: exchanges the authorization code for a session.
+    OAuth callback endpoint: exchanges the authorization code for a session or redirects to app.
     """
-    try:
-        res = exchange_code_for_session(code=code, redirect_to=redirect_to)
-        return _build_auth_response(res, default_message="OAuth login successful")
-    except Exception as e:
-        _handle_supabase_error(e)
+    if error:
+        raise HTTPException(status_code=400, detail=error_description or error)
+
+    if code:
+        try:
+            res = exchange_code_for_session(code=code, redirect_to=redirect_to)
+            auth_data = _build_auth_response(res, default_message="OAuth login successful")
+            if redirect_to and (redirect_to.startswith("lingopeer://") or redirect_to.startswith("exp://")):
+                token = auth_data.access_token
+                refresh = auth_data.refresh_token or ""
+                return RedirectResponse(
+                    url=f"{redirect_to}#access_token={token}&refresh_token={refresh}",
+                    status_code=302,
+                )
+            return auth_data
+        except Exception as e:
+            _handle_supabase_error(e)
+
+    # Fallback HTML page for browser redirect with hash fragments (#access_token=...)
+    html_content = """<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>LingoPeer Authentication</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #F4F7FB; color: #1E293B; }
+    .card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); text-align: center; max-width: 90%; width: 400px; }
+    h2 { margin-top: 0; color: #4F46E5; }
+    .btn { display: inline-block; margin-top: 1rem; padding: 0.75rem 1.5rem; background: #4F46E5; color: white; border-radius: 0.5rem; text-decoration: none; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>LingoPeer Login</h2>
+    <p id="msg">Completing authentication, redirecting to app...</p>
+    <a id="btn" class="btn" style="display:none;" href="#">Open LingoPeer App</a>
+  </div>
+  <script>
+    const hash = window.location.hash;
+    const search = window.location.search;
+    const targetUrl = "lingopeer://auth/callback" + hash + (search ? (hash ? "&" + search.slice(1) : search) : "");
+    const btn = document.getElementById("btn");
+    btn.href = targetUrl;
+    btn.style.display = "inline-block";
+    window.location.href = targetUrl;
+  </script>
+</body>
+</html>"""
+    return HTMLResponse(content=html_content, status_code=200)
 
 
 @auth_router.post("/google/id-token", response_model=AuthResponse)

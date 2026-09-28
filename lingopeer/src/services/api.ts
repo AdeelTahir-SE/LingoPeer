@@ -279,4 +279,14 @@ export const api = {
   // User Progress
   getUserProgress: (language: string = "Spanish") =>
     request<UserProgressData>(`/api/user/progress?language=${encodeURIComponent(language)}`),
+
+  getAllUserProgress: () =>
+    request<UserProgressData[]>("/api/user/progress/all"),
+
+  // Audio / Speech
+  transcribeAudio: (audioBase64: string, languageHint?: string) =>
+    request<{ text: string; language?: string }>("/api/chat/transcribe", {
+      method: "POST",
+      body: JSON.stringify({ audio_base64: audioBase64, language: languageHint }),
+    }),
 };

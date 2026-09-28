@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from dotenv import load_dotenv
-from supabase import create_client, Client
+from supabase import create_client, Client, ClientOptions
 from supabase_auth.errors import AuthApiError, AuthError
 
 # Load environment variables from .env file (either in lingopeer-backend or root)
@@ -14,7 +14,8 @@ else:
 supabase_url = os.environ.get("SUPABASE_URL") or "https://uulxfxtcjeroxneamqkn.supabase.co"
 supabase_key = os.environ.get("SUPABASE_KEY") or "sb_publishable_1-xb5l14CFMbPqKLwRk7WA_vyxYqFi4"
 
-client: Client = create_client(supabase_url, supabase_key)
+options = ClientOptions(flow_type="implicit")
+client: Client = create_client(supabase_url, supabase_key, options=options)
 
 
 def sign_up_user(email: str, password: str, data: dict | None = None):
@@ -55,13 +56,15 @@ def sign_in_with_google_url(redirect_to: str | None = None):
     return response.url
 
 
-def exchange_code_for_session(code: str, redirect_to: str | None = None):
+def exchange_code_for_session(code: str, redirect_to: str | None = None, code_verifier: str | None = None):
     """
     Exchange OAuth code for user session.
     """
-    params = {"code": code}
+    params = {"auth_code": code, "code": code}
     if redirect_to:
         params["redirect_to"] = redirect_to
+    if code_verifier:
+        params["code_verifier"] = code_verifier
 
     return client.auth.exchange_code_for_session(params)
 

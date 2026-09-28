@@ -44,7 +44,10 @@ class TestAuthEndpoints(unittest.TestCase):
         # FastAPI HTTPBearer returns 401 when Authorization header is missing
         self.assertIn(response.status_code, [401, 403])
 
-    def test_protected_me_with_invalid_token(self):
+    @patch("api.auth.deps.get_user_by_token")
+    def test_protected_me_with_invalid_token(self, mock_get_user):
+        from supabase_auth.errors import AuthError
+        mock_get_user.side_effect = AuthError("Invalid token")
         response = client.get("/auth/me", headers={"Authorization": "Bearer invalid.token.value"})
         self.assertEqual(response.status_code, 401)
 

@@ -64,3 +64,13 @@ class UserProgressResponse(BaseModel):
     words_learned: int
     sessions_completed: int
     last_practice_date: str
+
+
+class TranscribeAudioRequest(BaseModel):
+    audio_base64: str = Field(..., description="Base64 encoded audio recording (m4a, wav, mp3)")
+    language: Optional[str] = Field(None, description="Optional target language hint (e.g. es, en, fr)")
+
+
+class TranscribeAudioResponse(BaseModel):
+    text: str
+    language: Optional[str] = None

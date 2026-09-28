@@ -205,5 +205,25 @@ class ChatStore:
         self._local_progress[key] = updated_data
         return updated_data
 
+    def get_all_user_progress(self, user_id: str) -> List[Dict[str, Any]]:
+        try:
+            res = (
+                client.table("user_progress")
+                .select("*")
+                .eq("user_id", user_id)
+                .order("total_xp", desc=True)
+                .execute()
+            )
+            if res.data and len(res.data) > 0:
+                return res.data
+        except Exception:
+            pass
+
+        items = [p for p in self._local_progress.values() if p.get("user_id") == user_id]
+        if not items:
+            default_item = self.get_user_progress(user_id, "Spanish")
+            return [default_item]
+        return items
+
 
 chat_store = ChatStore()
